@@ -32,15 +32,40 @@ function parsePuzzleInput(input) {
 
   for (let item of items) {
     // const matches = item.match(regex);
+    const matches = [];
     for (word of Object.keys(wordToNumber)) {
-      const regex = `/(${word})/g`;
-      const found = item.match(regex);
-      console.log("🚀 ~ file: advent.js:38 ~ parsePuzzleInput ~ found:", found);
-      debugger;
-      item = item.replaceAll(word, wordToNumber[word]);
+      const regex = new RegExp(`(${word})`, "g");
+
+      while ((match = regex.exec(item)) !== null) {
+        matches.push({ substring: match[1], index: match.index });
+      }
+    }
+    let minMatch = { index: Infinity };
+    let maxMatch = { index: -Infinity };
+
+    for (const match of matches) {
+      if (match.index < minMatch.index) minMatch = match;
+      if (match.index > maxMatch.index) maxMatch = match;
     }
 
-    // console.log("🚀 ~ file: advent.js:37 ~ parsePuzzleInput ~ item:", item);
+    console.log(
+      "🚀 ~ file: advent.js:46 ~ parsePuzzleInput ~ maxMatch:",
+      maxMatch
+    );
+    console.log(
+      "🚀 ~ file: advent.js:45 ~ parsePuzzleInput ~ minMatch:",
+      minMatch
+    );
+
+    item = item.replaceAll(
+      minMatch.substring,
+      wordToNumber[minMatch.substring]
+    );
+
+    item = item.replaceAll(
+      maxMatch.substring,
+      wordToNumber[maxMatch.substring]
+    );
 
     output.push(item);
   }
@@ -57,26 +82,50 @@ function parsePuzzleInput(input) {
 
 async function decodeCalibration(defaultInput) {
   const input = defaultInput ? defaultInput : await getPuzzleInput();
-  const calibrations = parsePuzzleInput(input);
-  console.log(
-    "🚀 ~ file: advent.js:57 ~ decodeCalibration ~ calibrations:",
-    calibrations
-  );
+  const data = input
+    .replaceAll("one", "o1ne")
+    .replaceAll("two", "t2wo")
+    .replaceAll("three", "t3hree")
+    .replaceAll("four", "f4our")
+    .replaceAll("five", "f5ive")
+    .replaceAll("six", "s6ix")
+    .replaceAll("seven", "s7even")
+    .replaceAll("eight", "e8ight")
+    .replaceAll("nine", "n9ine");
+  const array = data.split("\n");
+  const regex = /\d/g;
 
-  let total = 0;
+  let result = 0;
 
-  for (const item of calibrations) {
-    if (item === "") {
-      console.log("continuing");
-      continue;
-    }
-    const firstDigit = getFirstDigit(item);
-    const lastDigit = getLastDigit(item);
-    total += Number(`${firstDigit}${lastDigit}`);
-    // console.log("🚀 ~ file: advent.js:58 ~ decodeCalibration ~ total:", total);
-  }
+  array.map((item, index) => {
+    if (item === "") return;
+    const match = item.match(regex);
+    let itemResult = 0;
+    itemResult = match[0] + match[match.length - 1];
+    result += Number(itemResult);
+  });
 
-  return total;
+  console.log("result", result);
+  //   const calibrations = parsePuzzleInput(input);
+  //   console.log(
+  //     "🚀 ~ file: advent.js:57 ~ decodeCalibration ~ calibrations:",
+  //     calibrations
+  //   );
+
+  //   let total = 0;
+
+  //   for (const item of calibrations) {
+  //     if (item === "") {
+  //       console.log("continuing");
+  //       continue;
+  //     }
+  //     const firstDigit = getFirstDigit(item);
+  //     const lastDigit = getLastDigit(item);
+  //     total += Number(`${firstDigit}${lastDigit}`);
+  //     // console.log("🚀 ~ file: advent.js:58 ~ decodeCalibration ~ total:", total);
+  //   }
+
+  //   return total;
 }
 
 function getFirstDigit(input) {
@@ -96,14 +145,9 @@ function getLastDigit(input) {
   }
 }
 
-const testData = `two1nine
-eightwothre
-abcone2threexyz
-xtwone3four
-4nineeightseven2
-zoneight234
+const testData = `
 7pqrstsixteen`;
-decodeCalibration(testData).then((answer) => {
+decodeCalibration().then((answer) => {
   console.log("Puzzle Answer: ", answer);
 });
 // console.log(getLastDigit("zngrtcj4zqzrbbhs"));
