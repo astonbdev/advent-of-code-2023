@@ -60,6 +60,7 @@ function parsePuzzleInput(input) {
     }
 
     //replace the found matches
+    //FIXME: I think this is just lucky
     item = item.replace(minMatch.substring, wordToNumber[minMatch.substring]);
     item = item.replace(maxMatch.substring, wordToNumber[maxMatch.substring]);
 
