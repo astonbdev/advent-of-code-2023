@@ -57,15 +57,9 @@ function parsePuzzleInput(input) {
       minMatch
     );
 
-    item = item.replaceAll(
-      minMatch.substring,
-      wordToNumber[minMatch.substring]
-    );
+    item = item.replace(minMatch.substring, wordToNumber[minMatch.substring]);
 
-    item = item.replaceAll(
-      maxMatch.substring,
-      wordToNumber[maxMatch.substring]
-    );
+    item = item.replace(maxMatch.substring, wordToNumber[maxMatch.substring]);
 
     output.push(item);
   }
@@ -82,50 +76,26 @@ function parsePuzzleInput(input) {
 
 async function decodeCalibration(defaultInput) {
   const input = defaultInput ? defaultInput : await getPuzzleInput();
-  const data = input
-    .replaceAll("one", "o1ne")
-    .replaceAll("two", "t2wo")
-    .replaceAll("three", "t3hree")
-    .replaceAll("four", "f4our")
-    .replaceAll("five", "f5ive")
-    .replaceAll("six", "s6ix")
-    .replaceAll("seven", "s7even")
-    .replaceAll("eight", "e8ight")
-    .replaceAll("nine", "n9ine");
-  const array = data.split("\n");
-  const regex = /\d/g;
+  const calibrations = parsePuzzleInput(input);
+  console.log(
+    "🚀 ~ file: advent.js:57 ~ decodeCalibration ~ calibrations:",
+    calibrations
+  );
 
-  let result = 0;
+  let total = 0;
 
-  array.map((item, index) => {
-    if (item === "") return;
-    const match = item.match(regex);
-    let itemResult = 0;
-    itemResult = match[0] + match[match.length - 1];
-    result += Number(itemResult);
-  });
+  for (const item of calibrations) {
+    if (item === "") {
+      console.log("continuing");
+      continue;
+    }
+    const firstDigit = getFirstDigit(item);
+    const lastDigit = getLastDigit(item);
+    total += Number(`${firstDigit}${lastDigit}`);
+    // console.log("🚀 ~ file: advent.js:58 ~ decodeCalibration ~ total:", total);
+  }
 
-  console.log("result", result);
-  //   const calibrations = parsePuzzleInput(input);
-  //   console.log(
-  //     "🚀 ~ file: advent.js:57 ~ decodeCalibration ~ calibrations:",
-  //     calibrations
-  //   );
-
-  //   let total = 0;
-
-  //   for (const item of calibrations) {
-  //     if (item === "") {
-  //       console.log("continuing");
-  //       continue;
-  //     }
-  //     const firstDigit = getFirstDigit(item);
-  //     const lastDigit = getLastDigit(item);
-  //     total += Number(`${firstDigit}${lastDigit}`);
-  //     // console.log("🚀 ~ file: advent.js:58 ~ decodeCalibration ~ total:", total);
-  //   }
-
-  //   return total;
+  return total;
 }
 
 function getFirstDigit(input) {
