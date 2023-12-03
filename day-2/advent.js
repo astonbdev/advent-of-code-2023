@@ -36,7 +36,12 @@ function getGameFreqs(input) {
 
   let total = 0;
   for (let i = 0; i < games.length - 1; i++) {
-    let valid_game = true;
+    //init to one since if there are no cubes pulled in the game this won't affect
+    //the outcome
+    let maxRed = 1;
+    let maxGreen = 1;
+    let maxBlue = 1;
+
     for (const pulls of games[i]) {
       for (const pull of pulls) {
         // console.log("🚀 ~ file: advent.js:42 ~ getGameFreqs ~ pull:", pull);
@@ -50,13 +55,13 @@ function getGameFreqs(input) {
         //   "🚀 ~ file: advent.js:46 ~ getGameFreqs ~ MAX_COLORS:",
         //   MAX_COLORS[color]
         // );
-        if (number > MAX_COLORS[color]) valid_game = false;
+        if (color === "red") maxRed = Math.max(maxRed, number);
+        if (color === "blue") maxBlue = Math.max(maxBlue, number);
+        if (color === "green") maxGreen = Math.max(maxGreen, number);
       }
     }
 
-    if (valid_game) {
-      total += i + 1;
-    }
+    total += maxRed * maxBlue * maxGreen;
   }
 
   console.log("🚀 ~ file: advent.js:54 ~ getGameFreqs ~ total:", total);
