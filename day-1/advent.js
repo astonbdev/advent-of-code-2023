@@ -1,5 +1,9 @@
 const token = process.env.AOC_24_TOKEN;
 
+/**
+ * fetch the puzzle data and return the response
+ * @returns puzzle text
+ */
 async function getPuzzleInput() {
   const response = await fetch("https://adventofcode.com/2023/day/1/input", {
     headers: {
@@ -10,7 +14,12 @@ async function getPuzzleInput() {
 
   return text;
 }
-
+/**
+ * Take in puzzle text, splits by newline and replaces the first and last instances of a "number word"
+ * with a proper number returning the resulting string
+ * @param {string} input
+ * @returns
+ */
 function parsePuzzleInput(input) {
   const wordToNumber = {
     one: 1,
@@ -23,16 +32,15 @@ function parsePuzzleInput(input) {
     eight: 8,
     nine: 9,
   };
+
+  //take out new lines
   const items = input.split(/\r?\n/);
-
-  //   const regex = /(one|two|three|four|five|six|seven|eight|nine)/g;
-  //   const matchingNumStrings = [];
-
   const output = [];
 
   for (let item of items) {
-    // const matches = item.match(regex);
     const matches = [];
+
+    //for each possible word numder, find the matches and add to our found matching word numbers
     for (word of Object.keys(wordToNumber)) {
       const regex = new RegExp(`(${word})`, "g");
 
@@ -40,47 +48,39 @@ function parsePuzzleInput(input) {
         matches.push({ substring: match[1], index: match.index });
       }
     }
+
     let minMatch = { index: Infinity };
     let maxMatch = { index: -Infinity };
 
+    //find the first and last matches, these are the only one that matter per the
+    //problem statement
     for (const match of matches) {
       if (match.index < minMatch.index) minMatch = match;
       if (match.index > maxMatch.index) maxMatch = match;
     }
 
-    console.log(
-      "🚀 ~ file: advent.js:46 ~ parsePuzzleInput ~ maxMatch:",
-      maxMatch
-    );
-    console.log(
-      "🚀 ~ file: advent.js:45 ~ parsePuzzleInput ~ minMatch:",
-      minMatch
-    );
-
+    //replace the found matches
     item = item.replace(minMatch.substring, wordToNumber[minMatch.substring]);
-
     item = item.replace(maxMatch.substring, wordToNumber[maxMatch.substring]);
 
     output.push(item);
   }
 
-  //   for (let i = 0; i < matchingNumStrings.length; i++) {
-  //     for (let match of matchingNumStrings[i]) {
-  //       items[i] = items[i].replaceAll(match, wordToNumber[match]);
-  //     }
-  //   }
-
-  //   console.log("🚀 ~ file: advent.js:43 ~ parsePuzzleInput ~ items:", items);
   return output;
 }
 
+/**
+ * takes string input or fetches from AOC.
+ *
+ * creates the calibration string and then finds the first and last digits, adding them to a running
+ * total that is then returned.
+ *
+ * @param {string} defaultInput
+ * @returns
+ */
 async function decodeCalibration(defaultInput) {
   const input = defaultInput ? defaultInput : await getPuzzleInput();
   const calibrations = parsePuzzleInput(input);
-  console.log(
-    "🚀 ~ file: advent.js:57 ~ decodeCalibration ~ calibrations:",
-    calibrations
-  );
 
   let total = 0;
 
@@ -98,6 +98,11 @@ async function decodeCalibration(defaultInput) {
   return total;
 }
 
+/**
+ * find first number of string
+ * @param {string} input
+ * @returns
+ */
 function getFirstDigit(input) {
   // console.log("🚀 ~ file: advent.js:62 ~ getFirstDigit ~ input:", input);
   for (let char of input) {
@@ -107,6 +112,11 @@ function getFirstDigit(input) {
   }
 }
 
+/**
+ * find last number of string
+ * @param {string} input
+ * @returns
+ */
 function getLastDigit(input) {
   for (let char = input.length - 1; char >= 0; char--) {
     if (!isNaN(input[char])) {
@@ -117,9 +127,7 @@ function getLastDigit(input) {
 
 const testData = `
 7pqrstsixteen`;
+
 decodeCalibration().then((answer) => {
   console.log("Puzzle Answer: ", answer);
 });
-// console.log(getLastDigit("zngrtcj4zqzrbbhs"));
-// console.log(getFirstDigit("zngrtcj4zqzrbbhs"));
-// console.log(parsePuzzleInput("onetwothreefourfivesixseveneightninenine"));
