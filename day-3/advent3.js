@@ -21,7 +21,6 @@ async function findMissingPart(testInput) {
     ? testInput.split("\n")
     : (await getPuzzleInput()).split("\n");
   const regex = /\d+/g;
-  console.log("🚀 ~ file: advent3.js:21 ~ findMissingPart ~ input:", input);
 
   for (let lineNum = 0; lineNum < input.length; lineNum++) {
     //execute the regex on each line, finding all numbers in that line
