@@ -42,7 +42,7 @@ function getEngineDetails(input) {
   //   "🚀 ~ file: advent3.js:26 ~ getEngineDetails ~ symbolLocations:",
   //   symbolLocations
   // );
-  // console.log("🚀 ~ file: advent3.js:29 ~ getEngineDetails ~ engine:", engine);
+  console.log("🚀 ~ file: advent3.js:29 ~ getEngineDetails ~ engine:", engine);
 
   return { symbolLocations, engine };
 }
@@ -58,34 +58,89 @@ function getMissingPartNumber({ symbolLocations, engine }) {
 
   for (location of symbolLocations) {
     const [y, x] = location.split("-").map((e) => Number(e));
-    const relativeCompassLocations = {
-      top: {
-        0: `${y - 1}-${x - 1}`,
-        1: `${y - 1}-${x}`,
-        2: `${y - 1}-${x + 1}`,
-      },
-      middle: {
-        0: `${y}-${x + 1}`,
-        1: `${y}-${x - 1}`,
-      },
-      bottom: {
-        0: `${y + 1}-${x - 1}`,
-        1: `${y + 1}-${x}`,
-        2: `${y + 1}-${x + 1}`,
-      },
+    const top = {
+      left: [y - 1, x - 1],
+      middle: [y - 1, x],
+      right: [y - 1, x + 1],
+    };
+    const middle = {
+      left: [y, x + 1],
+      right: [y, x - 1],
+    };
+    const bottom = {
+      left: [y + 1, x - 1],
+      middle: [y + 1, x],
+      right: [y + 1, x + 1],
     };
 
-    for (let row in relativeCompassLocations) {
-      for (let direction in relativeCompassLocations[row]) {
-        const [dirY, dirX] =
-          relativeCompassLocations[row][direction].split("-");
-        if (engine[dirY] !== undefined && !isNaN(engine[dirY][dirX])) {
-          partNumberLocations.push(relativeCompassLocations[row][direction]);
-          break;
-        }
+    partNumberLocations.push(...getTopAndBottomCoords(top));
+    partNumberLocations.push(...getTopAndBottomCoords(bottom));
+    partNumberLocations.push(...getMiddleCoords(middle));
+
+    function getTopAndBottomCoords(targets) {
+      const leftCoords = targets.left;
+      const rightCoords = targets.right;
+      const middleCoords = targets.middle;
+
+      const left = engine[leftCoords[0]][leftCoords[1]];
+      const right = engine[rightCoords[0]][rightCoords[1]];
+      const middle = engine[middleCoords[0]][middleCoords[1]];
+
+      if (!isNaN(left) && !isNaN(middle) && !isNaN(right)) {
+        return [`${leftCoords[0]}-${leftCoords[1]}`];
       }
+
+      if (!isNaN(left) && !isNaN(middle)) {
+        return [`${leftCoords[0]}-${leftCoords[1]}`];
+      }
+
+      if (!isNaN(right) && !isNaN(middle)) {
+        return [`${middleCoords[0]}-${middleCoords[1]}`];
+      }
+
+      const output = [];
+      if (!isNaN(left)) output.push(`${leftCoords[0]}-${leftCoords[1]}`);
+      if (!isNaN(right)) output.push(`${rightCoords[0]}-${rightCoords[1]}`);
+      if (!isNaN(middle)) output.push(`${middleCoords[0]}-${middleCoords[1]}`);
+
+      return output;
     }
+
+    function getMiddleCoords(targets) {
+      const leftCoords = targets.left;
+      const rightCoords = targets.right;
+
+      const left = engine[leftCoords[0]][leftCoords[1]];
+      const right = engine[rightCoords[0]][rightCoords[1]];
+
+      const output = [];
+      if (!isNaN(left)) output.push(`${leftCoords[0]}-${leftCoords[1]}`);
+      if (!isNaN(right)) output.push(`${rightCoords[0]}-${rightCoords[1]}`);
+
+      return output;
+    }
+
+    // for (let row in relativeCompassLocations) {
+    //   for (let direction in relativeCompassLocations[row]) {
+    //     let count = 0;
+    //     const [dirY, dirX] =
+    //       relativeCompassLocations[row][direction].split("-");
+    //     if (engine[dirY] !== undefined && !isNaN(engine[dirY][dirX])) {
+    //       partNumberLocations.push(relativeCompassLocations[row][direction]);
+    //       count++;
+    //     }
+
+    //     if (count === 3) {
+    //       partNumberLocations.pop();
+    //       partNumberLocations.pop();
+    //     }
+    //   }
+    // }
   }
+  console.log(
+    "🚀 ~ file: advent3.js:142 ~ getMissingPartNumber ~ partNumberLocations:",
+    partNumberLocations
+  );
 
   const partNumbers = getPartNumbers(partNumberLocations, engine);
   let partNumber = 0;
@@ -172,9 +227,14 @@ async function findMissingPart(testInput) {
   return partNumber;
 }
 
-const testInput = `1.1..
-.*...
-1.1..`;
-findMissingPart(testInput).then((answer) => {
+const testInput = `.1.1.
+..*..
+.1.1.
+.....
+11.11
+.1*1.
+11.11
+.....`;
+findMissingPart().then((answer) => {
   console.log("Puzzle Answer: ", answer);
 });
