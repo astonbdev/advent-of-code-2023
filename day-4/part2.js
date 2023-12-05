@@ -31,13 +31,11 @@ function countScratchCards(gameWinnerCounts) {
   const cardCounts = new Array(gameWinnerCounts.length).fill(1);
   //FIXME: There's obviously a better way
   for (let i = 0; i < cardCounts.length; i++) {
-    for (let j = 0; j < cardCounts[i]; j++) {
-      let count = gameWinnerCounts[i];
-      //Add one new card to each proceeding card based on winner count
-      for (let k = 1; k <= count; k++) {
-        console.log("setting");
-        cardCounts[k + i] += 1;
-      }
+    let count = gameWinnerCounts[i];
+    let numCards = cardCounts[i];
+    //Add one new card to each proceeding card based on winner count
+    for (let k = 1; k <= count; k++) {
+      cardCounts[k + i] += numCards;
     }
   }
 

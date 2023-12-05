@@ -227,6 +227,6 @@ const testInput = `467..114..
 ......755.
 ...$.*....
 .664.598..`;
-findMissingPart().then((answer) => {
+findMissingPart(testInput).then((answer) => {
   console.log("Puzzle Answer: ", answer);
 });
