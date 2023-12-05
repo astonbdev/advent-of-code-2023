@@ -29,7 +29,6 @@ async function getTotalPoints(testInput) {
 function countScratchCards(gameWinnerCounts) {
   // let numScratchCards = 0;
   const cardCounts = new Array(gameWinnerCounts.length).fill(1);
-  //FIXME: There's obviously a better way
   for (let i = 0; i < cardCounts.length; i++) {
     let count = gameWinnerCounts[i];
     let numCards = cardCounts[i];
