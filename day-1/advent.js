@@ -1,19 +1,5 @@
-const token = process.env.AOC_24_TOKEN;
+import getPuzzleInput from "../api.js";
 
-/**
- * fetch the puzzle data and return the response
- * @returns puzzle text
- */
-async function getPuzzleInput() {
-  const response = await fetch("https://adventofcode.com/2023/day/1/input", {
-    headers: {
-      cookie: token,
-    },
-  });
-  const text = await response.text();
-
-  return text;
-}
 /**
  * Take in puzzle text, splits by newline and replaces the first and last instances of a "number word"
  * with a proper number returning the resulting string
@@ -41,9 +27,10 @@ function parsePuzzleInput(input) {
     const matches = [];
 
     //for each possible word numder, find the matches and add to our found matching word numbers
-    for (word of Object.keys(wordToNumber)) {
+    for (const word of Object.keys(wordToNumber)) {
       const regex = new RegExp(`(${word})`, "g");
 
+      let match = "";
       while ((match = regex.exec(item)) !== null) {
         matches.push({ substring: match[1], index: match.index });
       }
@@ -80,7 +67,7 @@ function parsePuzzleInput(input) {
  * @returns
  */
 async function decodeCalibration(defaultInput) {
-  const input = defaultInput ? defaultInput : await getPuzzleInput();
+  const input = defaultInput ? defaultInput : await getPuzzleInput(1);
   const calibrations = parsePuzzleInput(input);
 
   let total = 0;
