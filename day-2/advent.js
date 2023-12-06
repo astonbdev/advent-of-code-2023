@@ -1,19 +1,4 @@
-const token = process.env.AOC_24_TOKEN;
-
-/**
- * fetch the puzzle data and return the response
- * @returns puzzle text
- */
-async function getPuzzleInput() {
-  const response = await fetch("https://adventofcode.com/2023/day/2/input", {
-    headers: {
-      cookie: token,
-    },
-  });
-  const text = await response.text();
-
-  return text;
-}
+import getPuzzleInput from "../api.js";
 
 function getGameFreqs(input) {
   const MAX_COLORS = {
@@ -75,9 +60,9 @@ const MAX_VALUES = {
   blue: 14,
 };
 async function testGames(testInput) {
-  const input = testInput ? testInput : await getPuzzleInput();
+  const input = testInput ? testInput : await getPuzzleInput(2);
 
-  gameCounters = getGameFreqs(input);
+  return getGameFreqs(input);
 }
 
 const testInput = `Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
