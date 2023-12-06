@@ -12,27 +12,30 @@ async function getSeedLocations(input) {
   //prepare our data
   const { data, seeds } = getData(input);
 
-  //iterate over our keys, and call each new map with the previous input
-  let currItems = seeds;
-  for (const locationData of data.values()) {
-    currItems = getItems(locationData, currItems);
+  let min = Infinity;
+  for (let i = 0; i < seeds.length; i += 2) {
+    for (let j = seeds[i]; j < seeds[i] + seeds[i + 1]; j++) {
+      let currItems = [j];
+      for (const locationData of data.values()) {
+        currItems = getItems(locationData, currItems);
+      }
+      min = Math.min(min, ...currItems);
+    }
   }
 
-  //return smallets location plot per puzzle description
-  return Math.min(...currItems);
+  return min;
 }
-console.log(
-  "getItems: ",
-  getItems(
-    [
-      [50, 98, 2],
-      [52, 50, 48],
-    ],
-    [79, 14, 55, 13]
-  )
-);
+
+/**
+ * inputs:
+ * locationData -
+ *  {"item-to-item: [...[source, destination, range]]"}
+ * items - [number, number, ...]
+ *
+ * translates the item numbers into their converted form based on the given locationData, returns new list
+ * of item values
+ */
 function getItems(locationData, items) {
-  //construct item to destination map
   const newItems = [];
 
   for (const item of items) {
@@ -43,42 +46,37 @@ function getItems(locationData, items) {
     for (const data of locationData) {
       const [dRange, sRange, range] = data;
       //test the source
+      //if within source range, get destination and break this loop
       if (sRange <= item && item < sRange + range) {
         found = true;
         let newItem = dRange + (item - sRange);
         newItems.push(newItem);
         break;
       }
-      //if within source range, get destination and break this loop
-      //otherwise next iteration
     }
     //test if item was found in the given source ranges, if not add the item to
-    //next items
+    //new items
     if (!found) {
       newItems.push(item);
     }
   }
 
-  // const nextItems = [];
-  // for (const item of items) {
-  //   const mappedValue = sourceMap.get(item);
-  //   const nextItem = mappedValue ? mappedValue : item;
-  //   nextItems.push(nextItem);
-  // }
-
   return newItems;
 }
 
 /**
- * iterates over our raw puzzle input and returns object of *thing-map* : [numbers]
+ * iterates over our raw puzzle input and returns map of *item-to-item* : [[numbers]]
  * @param {puzzleInput} input
- * @returns
+ * @returns {data: Map, seeds: number[]}
  */
 function getData(input) {
   input = input.split("\n");
+
   let seeds = input.shift().match(/\d+/g);
   seeds = seeds.map((str) => Number(str));
+
   input = input.filter((line) => line !== "");
+
   const data = new Map();
   let currKey = "";
 
