@@ -12,7 +12,9 @@ async function getSeedLocations(input) {
   //prepare our data
   const { data, seeds } = getData(input);
 
-  let min = Infinity;
+  //FIXME: This solution took 2.5 hours, since the puzzle input has literally billions of items
+  //There is probably a way to find ranges of numbers that we can just plug in and output, something
+  //to do with sets subsets etc.
   for (let i = 0; i < seeds.length; i += 2) {
     for (let j = seeds[i]; j < seeds[i] + seeds[i + 1]; j++) {
       let currItems = [j];
