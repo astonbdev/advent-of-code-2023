@@ -31,10 +31,6 @@ function solvePuzzle(input) {
     }
 
     winsPerRace.push(numWins);
-    console.log(
-      "🚀 ~ file: part1.js:28 ~ solvePuzzle ~ winsPerRace:",
-      winsPerRace
-    );
   }
 
   return winsPerRace.reduce((prev, curr) => prev * curr);
