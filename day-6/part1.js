@@ -1,10 +1,16 @@
 import getPuzzleInput from "../api.js";
 import TEST_INPUT from "./test.js";
 
+/* D = V * T (some acceleration stuff too if we cared)*/
 function getDistance(velocity, time) {
   return velocity * time;
 }
 
+/** Iterate over an array of objects like {time, distance}
+ * determines the number of times we will exceed the given distance and
+ * counts these as wins. Then multiplies these win totals together
+ * to get the puzzle answer
+ */
 function solvePuzzle(input) {
   const winsPerRace = [];
 
